@@ -1,62 +1,52 @@
-import { useEffect, useState } from 'react'
-import Todo from './Todo'
+import { useState } from 'react'
+import TodoList from './TodoList'
+import Login from './Login'
+import Register from './Register'
+import { AuthProvider, useAuth } from './AuthContext'
+import './styles.css'
 
-function App() {
-  const[todos, setTodos] = useState([])
-  const[content, setContent] = useState('')
-  
-  useEffect(() => {
-    async function getToDos() {
-      const res = await fetch("/api/todos")
-      const todos = await res.json()
-      
-      setTodos(todos)
+function AppContent() {
+    const { isAuthenticated, logout, token } = useAuth();
+    const [showRegister, setShowRegister] = useState(false);
+
+    if (!isAuthenticated) {
+        return (
+            <div className="auth-container">
+                {showRegister ? (
+                    <>
+                        <Register />
+                        <button onClick={() => setShowRegister(false)}>
+                            Switch to Login
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Login />
+                        <button onClick={() => setShowRegister(true)}>
+                            Register
+                        </button>
+                    </>
+                )}
+            </div>
+        );
     }
 
-    getToDos()
-
-  }, [])
-
-
-  const createNewTodo = async (e) => {
-    e.preventDefault()
-    if (content.length > 3){
-      const res = await fetch('/api/todos', {
-        method: 'POST',
-        body: JSON.stringify({todo: content}),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      const newTodo = await res.json()
-
-      setContent('')
-      setTodos([...todos, newTodo])
-    }
-  }
-
-  return (
-    <main className="container">
-      <h1 className='title'>Todo Manager</h1>
-      <form className='form' onSubmit={createNewTodo}>
-        <input type='text'
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder='Enter a new todo..'
-        className='form__input'
-        required
-        />
-        <button className='form__button' type='submit'>Create Todo</button>
-      </form>
-      <div className='todos'>
-      {(todos.length > 0) && 
-        todos.map((todo) => (
-          <Todo key={todo._id} todo={todo} setTodos={setTodos} />
-        ))
-      }
-      </div>
-    </main>
-  )
+    return (
+        <main className="container">
+            <button onClick={logout} className="logout-button">
+                Logout
+            </button>
+            <TodoList token={token} />
+        </main>
+    );
 }
 
-export default App
+function App() {
+    return (
+        <AuthProvider>
+            <AppContent />
+        </AuthProvider>
+    );
+}
+
+export default App;

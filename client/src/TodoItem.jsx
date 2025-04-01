@@ -1,14 +1,15 @@
 
 
-function Todo(props){
-    const {todo, setTodos} = props;
+function TodoItem({todo, setTodos, token}){
+    
 
     const updateTodo = async (todoId, todoStatus) => {
         const res = await fetch(`/api/todos/${todoId}`, {
             method: "PUT",
             body: JSON.stringify({status: todoStatus}),
             headers: {
-                "Content-Type": 'application/json'
+                "Content-Type": 'application/json',
+                "Authorization": `Bearer ${token}`
             },
         });
 
@@ -27,7 +28,10 @@ function Todo(props){
 
     const deleteTodo = async (todoId) => {
         const res = await fetch(`/api/todos/${todoId}`, {
-            method: "DELETE"
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
         });
         const json = await res.json()
         if(json.acknowledged) {
@@ -59,4 +63,4 @@ function Todo(props){
     )
 }
 
-export default Todo
+export default TodoItem
