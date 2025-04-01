@@ -39,7 +39,7 @@ function TodoList({ token }) {
 
     return (
         <>
-            <h1 className='title'>Todo Manager</h1>
+            <h1 className='title'>To-do Manager</h1>
             <form className='form' onSubmit={createNewTodo}>
                 <input
                     type='text'
@@ -49,7 +49,7 @@ function TodoList({ token }) {
                     className='form__input'
                     required
                 />
-                <button className='form__button' type='submit'>Create Todo</button>
+                <button className='form__button' type='submit'>Create To-do</button>
             </form>
             <div className='todos'>
                 {(todos.length > 0) && 
