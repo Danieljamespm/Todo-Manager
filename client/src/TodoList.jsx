@@ -1,39 +1,53 @@
 import { useState, useEffect } from 'react'
 import TodoItem from './TodoItem'
+import { useAuth } from './AuthContext'
 
-function TodoList({ token }) {
+const API_URL = 'http://localhost:5000'; // Add server URL
+
+function TodoList() {
     const [todos, setTodos] = useState([])
     const [content, setContent] = useState('')
-    
-    useEffect(() => {
-        getTodos()
-    }, [])
+    const { token } = useAuth()
 
-    const getTodos = async () => {
-        const res = await fetch("/api/todos", {
-            headers: {
-                "Authorization": `Bearer ${token}`
+    useEffect(() => {
+        const fetchTodos = async () => {
+            try {
+                const res = await fetch(`${API_URL}/api/todos`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                const data = await res.json()
+                setTodos(data)
+            } catch (error) {
+                console.error('Error fetching todos:', error)
             }
-        })
-        const todos = await res.json()
-        setTodos(todos)
-    }
+        }
+
+        if (token) {
+            fetchTodos()
+        }
+    }, [token])
 
     const createNewTodo = async (e) => {
         e.preventDefault()
         if (content.length > 3) {
-            const res = await fetch('/api/todos', {
-                method: 'POST',
-                body: JSON.stringify({ todo: content }),
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-            })
-            const newTodo = await res.json()
+            try {
+                const res = await fetch(`${API_URL}/api/todos`, {
+                    method: 'POST',
+                    body: JSON.stringify({ todo: content }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                })
+                const newTodo = await res.json()
 
-            setContent('')
-            setTodos([...todos, newTodo])
+                setContent('')
+                setTodos([...todos, newTodo])
+            } catch (error) {
+                console.error('Error creating todo:', error)
+            }
         }
     }
 
