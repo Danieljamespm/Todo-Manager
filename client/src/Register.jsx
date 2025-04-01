@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 
-const API_URL = 'http://localhost:5000'; 
-
 export default function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -11,10 +9,10 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(''); 
+        setError('');
 
         try {
-            const response = await fetch(`${API_URL}/api/users/register`, {
+            const response = await fetch('/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,22 +20,18 @@ export default function Register() {
                 body: JSON.stringify({ email, password }),
             });
 
-            let errorData;
-            try {
-                errorData = await response.json();
-            } catch (e) {
-                throw new Error('Unable to connect to server. Please try again.');
-            }
+            const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(errorData.message || 'Registration failed');
+                throw new Error(data.message || 'Registration failed');
             }
 
-            if (!errorData.token) {
-                throw new Error('No token received from server');
+            // If registration is successful, automatically log in
+            if (data.token) {
+                login(data.token);
+            } else {
+                throw new Error('No token received after registration');
             }
-            
-            login(errorData.token);
         } catch (err) {
             console.error('Registration error:', err);
             setError(err.message);

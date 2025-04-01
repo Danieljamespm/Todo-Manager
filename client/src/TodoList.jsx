@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import TodoItem from './TodoItem'
 import { useAuth } from './AuthContext'
 
-const API_URL = 'http://localhost:5000'; // Add server URL
-
 function TodoList() {
     const [todos, setTodos] = useState([])
     const [content, setContent] = useState('')
@@ -12,7 +10,7 @@ function TodoList() {
     useEffect(() => {
         const fetchTodos = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/todos`, {
+                const res = await fetch('/api/todos', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -33,7 +31,7 @@ function TodoList() {
         e.preventDefault()
         if (content.length > 3) {
             try {
-                const res = await fetch(`${API_URL}/api/todos`, {
+                const res = await fetch('/api/todos', {
                     method: 'POST',
                     body: JSON.stringify({ todo: content }),
                     headers: {

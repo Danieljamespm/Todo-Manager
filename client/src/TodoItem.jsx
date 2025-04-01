@@ -1,11 +1,9 @@
-const API_URL = 'http://localhost:5000'; 
-
 function TodoItem({todo, setTodos, token}){
     
 
     const updateTodo = async (todoId, todoStatus) => {
         try {
-            const res = await fetch(`${API_URL}/api/todos/${todoId}`, {
+            const res = await fetch(`/api/todos/${todoId}`, {
                 method: "PUT",
                 body: JSON.stringify({status: todoStatus}),
                 headers: {
@@ -32,7 +30,7 @@ function TodoItem({todo, setTodos, token}){
 
     const deleteTodo = async (todoId) => {
         try {
-            const res = await fetch(`${API_URL}/api/todos/${todoId}`, {
+            const res = await fetch(`/api/todos/${todoId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`

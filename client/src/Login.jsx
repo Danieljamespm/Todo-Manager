@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './AuthContext';
 
-const API_URL = 'http://localhost:5000'; // Add server URL
-
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,7 +12,7 @@ export default function Login() {
         setError(''); // Clear any previous errors
         
         try {
-            const response = await fetch(`${API_URL}/api/users/login`, {
+            const response = await fetch('/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
